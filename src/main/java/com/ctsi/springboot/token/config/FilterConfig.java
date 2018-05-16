@@ -36,6 +36,8 @@ public class FilterConfig {
 		initParameters.put("other", "/other");
 		reg.setInitParameters(initParameters);
 		
+		reg.setEnabled(false);
+		
 		
 		return reg;
 	}
