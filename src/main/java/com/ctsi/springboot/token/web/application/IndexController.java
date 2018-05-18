@@ -4,16 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ctsi.springboot.token.config.FilterConfig;
 import com.ctsi.springboot.token.util.JwtUtil;
 
 @RestController
 public class IndexController {
 	
 	private static final Logger logger = Logger.getLogger(IndexController.class);
+	
+	@Autowired
+	private FilterConfig filterConfig;
 	
 	@RequestMapping("/index")
 	public String index() {
@@ -30,11 +35,14 @@ public class IndexController {
 		
 		// 通过认证的账号
 		if ("a".equals(username) && "b".equals(passwd)) {
-			Map<String, Object> claims = new HashMap<>();
-			String token = JwtUtil.generateToken(claims);
-			logger.info("## " + token);
-			
-			map.put("token", token);
+			logger.info("## token flag " + filterConfig.isFilterToken());
+			if (filterConfig.isFilterToken()) {
+				Map<String, Object> claims = new HashMap<>();
+				String token = JwtUtil.generateToken(claims);
+				logger.info("## " + token);
+				
+				map.put("token", token);
+			}
 		}
 		// 不通过
 		else {

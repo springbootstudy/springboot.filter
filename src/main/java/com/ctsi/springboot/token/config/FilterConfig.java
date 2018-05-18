@@ -7,6 +7,7 @@ import javax.servlet.Filter;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +21,15 @@ public class FilterConfig {
 	
 	private static final Logger log = Logger.getLogger(FilterConfig.class);
 	
+	@Value("${filter.token}")
+	private boolean filterToken = true;
+	
 	@Autowired
 	private JwtLoginFilter jwtLoginFilter;
 	
 	@Bean
 	public FilterRegistrationBean<Filter> filterRegistrationBean() {
-		log.info("## ");
+		log.info("### " + filterToken);
 		
 		FilterRegistrationBean<Filter> reg = new FilterRegistrationBean<Filter>();
 		reg.setFilter(jwtLoginFilter);
@@ -36,10 +40,18 @@ public class FilterConfig {
 		initParameters.put("other", "/other");
 		reg.setInitParameters(initParameters);
 		
-		reg.setEnabled(false);
+		reg.setEnabled(filterToken);
 		
 		
 		return reg;
+	}
+
+	public boolean isFilterToken() {
+		return filterToken;
+	}
+
+	public void setFilterToken(boolean filterToken) {
+		this.filterToken = filterToken;
 	}
 
 }
