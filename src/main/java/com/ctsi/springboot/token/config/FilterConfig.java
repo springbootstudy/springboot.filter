@@ -21,8 +21,8 @@ public class FilterConfig {
 	
 	private static final Logger log = Logger.getLogger(FilterConfig.class);
 	
-	@Value("${filter.token}")
-	private boolean filterToken = true;
+	@Value("${filter.token:true}")
+	private boolean filterToken;
 	
 	@Autowired
 	private JwtLoginFilter jwtLoginFilter;
@@ -41,7 +41,6 @@ public class FilterConfig {
 		reg.setInitParameters(initParameters);
 		
 		reg.setEnabled(filterToken);
-		
 		
 		return reg;
 	}
