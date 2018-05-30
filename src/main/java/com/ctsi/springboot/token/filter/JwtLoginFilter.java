@@ -18,8 +18,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -58,7 +60,21 @@ public class JwtLoginFilter implements Filter  {
 		log.info("## doFilter ");
 		
 		HttpServletRequest req = (HttpServletRequest) request;
-		log.info("## " + req.getServletPath());
+		HttpServletResponse rep = (HttpServletResponse) response;
+		log.info("## " + req.getMethod() + ", " + req.getServletPath());
+		
+		rep.setHeader("Access-Control-Allow-Origin", "*");  
+		
+		// 判定是否预检请求
+		if ("OPTIONS".equals(req.getMethod())) {
+			log.info("## 处理预检");
+			rep.setStatus(HttpStatus.NO_CONTENT.value());
+			//当判定为预检请求后，设定允许请求的头部类型
+			rep.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with, Token"); 
+			//当判定为预检请求后，设定允许请求的方法
+			rep.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS, DELETE");
+			rep.addHeader("Access-Control-Max-Age", "1"); 
+		}
 		
 		boolean isExcludedPage = false;
 		for (String page : excludedPageList) {
