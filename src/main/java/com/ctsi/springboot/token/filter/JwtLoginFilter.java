@@ -73,7 +73,7 @@ public class JwtLoginFilter implements Filter  {
 			rep.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with, Token"); 
 			//当判定为预检请求后，设定允许请求的方法
 			rep.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS, DELETE");
-			rep.addHeader("Access-Control-Max-Age", "1"); 
+//			rep.addHeader("Access-Control-Max-Age", "1"); 
 		}
 		
 		boolean isExcludedPage = false;
