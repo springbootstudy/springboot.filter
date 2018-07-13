@@ -46,9 +46,9 @@ public class JwtUtil {
     public static String generateToken(Map<String, Object> claims) {
     	log.info("JwtUtil 设置默认时间 " + time);
 //    	long time = 3600 * 1000 * 2; // 2小时
-    	long time = 60 * 1000 * 5; // 5分钟
-    	time = 30 * 1000;
-    	long date = System.currentTimeMillis() + time;
+//    	long time = 60 * 1000 * 5; // 5分钟
+    	int tokenTime = time * 1000;
+    	long date = System.currentTimeMillis() + tokenTime;
         Date expirationDate = new Date(date);
         log.info("时间有效期 " + date + ", " + expirationDate);
         
