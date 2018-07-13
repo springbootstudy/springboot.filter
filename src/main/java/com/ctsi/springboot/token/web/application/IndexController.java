@@ -3,9 +3,12 @@ package com.ctsi.springboot.token.web.application;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,10 +26,10 @@ public class IndexController {
 	private FilterConfig filterConfig;
 	
 	@RequestMapping("/index")
-	public String index() {
-		logger.info("## Index");
+	public ResponseEntity<String> index(HttpSession session) {
+		logger.info("## Index " + session.getId());
 		
-		return "OK";
+		return new ResponseEntity<String>("OK-" + session.getId(), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -44,7 +47,7 @@ public class IndexController {
 			if (filterConfig.isFilterToken()) {
 				Map<String, Object> claims = new HashMap<>();
 				String token = JwtUtil.generateToken(claims);
-				logger.info("## " + token);
+//				logger.info("## " + token);
 				
 				map.put("token", token);
 			}
@@ -55,6 +58,34 @@ public class IndexController {
 		}
 		
 		return map;
+	}
+	
+	@RequestMapping(value = "/logine", method = RequestMethod.POST)
+	public ResponseEntity<Object> logine(@RequestBody User user) {
+		String username = user.getUsername();
+		String passwd = user.getPasswd();
+		
+		logger.info("## post login " + username + ", " + passwd);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		// 通过认证的账号
+		if ("a".equals(username) && "b".equals(passwd)) {
+			logger.info("## token flag " + filterConfig.isFilterToken());
+			if (filterConfig.isFilterToken()) {
+				Map<String, Object> claims = new HashMap<>();
+				String token = JwtUtil.generateToken(claims);
+//				logger.info("## " + token);
+				
+				map.put("token", token);
+			}
+		}
+		// 不通过
+		else {
+			map.put("error", HttpStatus.UNAUTHORIZED);
+		}
+		
+		return new ResponseEntity<Object>(map, HttpStatus.OK);
 	}
 	
 	@RequestMapping("/login")
@@ -69,7 +100,7 @@ public class IndexController {
 			if (filterConfig.isFilterToken()) {
 				Map<String, Object> claims = new HashMap<>();
 				String token = JwtUtil.generateToken(claims);
-				logger.info("## " + token);
+//				logger.info("## " + token);
 				
 				map.put("token", token);
 			}

@@ -25,6 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.ctsi.springboot.token.entity.AjaxData;
+import com.ctsi.springboot.token.util.JacksonUtil;
 import com.ctsi.springboot.token.util.JwtUtil;
 
 @Component
@@ -37,8 +39,6 @@ public class JwtLoginFilter implements Filter  {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		log.info("## init ");
-
 		excludedPageList = new ArrayList<String>();
 		Enumeration<String> enums = filterConfig.getInitParameterNames();
 		String key;
@@ -73,7 +73,8 @@ public class JwtLoginFilter implements Filter  {
 			rep.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with, Token"); 
 			//当判定为预检请求后，设定允许请求的方法
 			rep.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS, DELETE");
-//			rep.addHeader("Access-Control-Max-Age", "1"); 
+			// 单位秒
+			rep.addHeader("Access-Control-Max-Age", "60"); 
 		}
 		
 		boolean isExcludedPage = false;
@@ -94,14 +95,15 @@ public class JwtLoginFilter implements Filter  {
 		else { // 不在过滤url之外
 			response.setContentType("application/json; charset=utf-8");
 			
+			AjaxData ajaxData;
 			String token = req.getHeader("token");
 			log.info("## " + token);
 			// 通过验证 true
 			if (StringUtils.isEmpty(token)) {
 				log.info("## token为空");
-				
 				try ( Writer writer = response.getWriter() ) {
-					writer.write("请登录系统");
+					ajaxData = new AjaxData(1000, "请登录系统");
+					writer.write(JacksonUtil.bean2Json(ajaxData));
 				}
 				catch (Exception ex) {
 					ex.printStackTrace();
@@ -120,7 +122,9 @@ public class JwtLoginFilter implements Filter  {
 					
 					if (curTime > tokenTime) {
 						try ( Writer writer = response.getWriter() ) {
-							writer.write("token 过期，请重新获取");
+//							writer.write("token 过期，请重新获取");
+							ajaxData = new AjaxData(1001, "token 过期，请重新获取");
+							writer.write(JacksonUtil.bean2Json(ajaxData));
 						}
 						catch (Exception e) {
 							e.printStackTrace();
@@ -136,7 +140,9 @@ public class JwtLoginFilter implements Filter  {
 					log.info("## token 过期");
 					ex.printStackTrace();
 					try ( Writer writer = response.getWriter() ) {
-						writer.write("token 过期，请重新获取");
+//						writer.write("token 过期，请重新获取");
+						ajaxData = new AjaxData(1001, "token 过期，请重新获取");
+						writer.write(JacksonUtil.bean2Json(ajaxData));
 					}
 					catch (Exception e) {
 						e.printStackTrace();
@@ -148,7 +154,9 @@ public class JwtLoginFilter implements Filter  {
 					log.info("## 解析token出错");
 					
 					try ( Writer writer = response.getWriter() ) {
-						writer.write("token 不正确");
+//						writer.write("token 不正确");
+						ajaxData = new AjaxData(1002, "token 不正确");
+						writer.write(JacksonUtil.bean2Json(ajaxData));
 					}
 					catch (Exception e) {
 						e.printStackTrace();
@@ -161,8 +169,6 @@ public class JwtLoginFilter implements Filter  {
 
 	@Override
 	public void destroy() {
-		log.info("## destroy ");
-		log.info("## destroy ");
 		
 	}
 	

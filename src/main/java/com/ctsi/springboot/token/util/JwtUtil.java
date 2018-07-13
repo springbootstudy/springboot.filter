@@ -35,6 +35,7 @@ public class JwtUtil {
     public static String generateToken(Map<String, Object> claims) {
 //    	long time = 3600 * 1000 * 2; // 2小时
     	long time = 60 * 1000 * 5; // 5分钟
+    	time = 30 * 1000;
     	long date = System.currentTimeMillis() + time;
         Date expirationDate = new Date(date);
         log.info("时间有效期 " + date + ", " + expirationDate);

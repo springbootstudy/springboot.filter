@@ -35,9 +35,11 @@ public class FilterConfig {
 		reg.setFilter(jwtLoginFilter);
 //		reg.addInitParameter("login", "/login");
 		
+		// 不需要验证的 url
 		Map<String, String> initParameters = new HashMap<>();
 		initParameters.put("login", "/login");
 		initParameters.put("other", "/other");
+		initParameters.put("logine", "/logine");
 		reg.setInitParameters(initParameters);
 		
 		reg.setEnabled(filterToken);
