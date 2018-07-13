@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 
@@ -17,14 +19,23 @@ import org.apache.log4j.Logger;
  *
  *
  */
+@Component
 public class JwtUtil {
 	
 	private static final Logger log = Logger.getLogger(JwtUtil.class);
+	
+	// 默认 3600 秒
+//	@Value("${filter.token.time:3600}")
+	private static int time = 3600;
 	
 	/**
      * 密钥
      */
     private static final String secret = "nc.moc.istc";
+    
+    private JwtUtil() {
+    	log.info("JwtUtil 初始化默认时间 " + time);
+    }
 
     /**
      * 从数据声明生成令牌
@@ -33,6 +44,7 @@ public class JwtUtil {
      * @return 令牌
      */
     public static String generateToken(Map<String, Object> claims) {
+    	log.info("JwtUtil 设置默认时间 " + time);
 //    	long time = 3600 * 1000 * 2; // 2小时
     	long time = 60 * 1000 * 5; // 5分钟
     	time = 30 * 1000;
@@ -83,5 +95,10 @@ public class JwtUtil {
 //    		ex.printStackTrace();
 //    	}
     }
+
+    @Value("${filter.token.time:3600}")
+	public void setTime(int time) {
+		JwtUtil.time = time;
+	}
 
 }
