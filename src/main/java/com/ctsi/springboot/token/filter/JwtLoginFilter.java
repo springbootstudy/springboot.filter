@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.ctsi.springboot.token.entity.AjaxData;
+import com.ctsi.springboot.token.util.Constants;
 import com.ctsi.springboot.token.util.JacksonUtil;
 import com.ctsi.springboot.token.util.JwtUtil;
 
@@ -61,7 +62,13 @@ public class JwtLoginFilter implements Filter  {
 		
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse rep = (HttpServletResponse) response;
-		log.info("## " + req.getMethod() + ", " + req.getServletPath());
+		log.info("## " + req.getMethod() + ", " + req.getServletPath() + ", " + req.getUserPrincipal());
+		
+//		Enumeration<String> names = req.getAttributeNames();
+//		while (names.hasMoreElements()) {
+//			String name = names.nextElement();
+//			System.out.println(name + ", " + req.getAttribute(name));
+//		}
 		
 		rep.setHeader("Access-Control-Allow-Origin", "*");  
 		
@@ -114,6 +121,7 @@ public class JwtLoginFilter implements Filter  {
 				try {
 //					JwtUtil.validateToken(token);
 					Claims claims = JwtUtil.getClaimsFromToken(token);
+					log.info("## " + claims.get("username") + ", " + claims.get("userid") + ", " + claims.get(Constants.TOKEN_DATA));
 					Date date = claims.getExpiration();
 					long tokenTime = date.getTime();
 					log.info("## 获取Token的时间 " + tokenTime + ", " + new Date(tokenTime));
@@ -133,6 +141,7 @@ public class JwtLoginFilter implements Filter  {
 					}
 					else {
 						log.info("## 通过验证");
+						req.setAttribute("tokenData", claims);
 						chain.doFilter(request, response);
 					}
 				}
