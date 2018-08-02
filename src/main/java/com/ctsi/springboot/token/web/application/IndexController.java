@@ -58,6 +58,8 @@ public class IndexController {
 //			e.printStackTrace();
 //		}
 		
+		log.info("## Index " + session.getId());
+		
 		return new ResponseEntity<String>("OK-" + session.getId(), HttpStatus.OK);
 	}
 	

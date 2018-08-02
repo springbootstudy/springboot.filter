@@ -29,16 +29,18 @@ public class TokenDataUtil {
 	public static Optional<TokenData> getData(HttpServletRequest req) {
 		Claims claims = (Claims) req.getAttribute("tokenData");
 		
-		Optional<TokenData> opt;
 		if (null == claims) {
-			opt = Optional.empty();
+			return Optional.empty();
 		}
 		
+		Optional<TokenData> opt;
 		try {
 			String json = JacksonUtil.bean2Json(claims.get(Constants.TOKEN_DATA));
+			json = JacksonUtil.bean2Json(claims.get(Constants.USER_USERNAME));
 			log.info("## " + json);
 			
 			TokenData data = JacksonUtil.json2Bean(json, TokenData.class);
+			log.info("## " + data);
 			
 			opt = Optional.ofNullable(data);
 		} 
