@@ -36,7 +36,7 @@ public class TokenDataUtil {
 		Optional<TokenData> opt;
 		try {
 			String json = JacksonUtil.bean2Json(claims.get(Constants.TOKEN_DATA));
-			json = JacksonUtil.bean2Json(claims.get(Constants.USER_USERNAME));
+//			json = JacksonUtil.bean2Json(claims.get(Constants.USER_USERNAME));
 			log.info("## " + json);
 			
 			TokenData data = JacksonUtil.json2Bean(json, TokenData.class);

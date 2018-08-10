@@ -150,6 +150,28 @@ public class IndexController {
 		
 		return map;
 	}
+	
+	@RequestMapping(value = "/refreshToken")
+	public ResponseEntity<Object> refreshToken(HttpServletRequest req) {
+		log.info("## 刷新 Token ");
+		
+		// 获取 Token 中存储的数据
+		Optional<TokenData> data = TokenDataUtil.getData(req);
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (data.isPresent()) {
+			// 重新生成
+			Map<String, Object> claims = new HashMap<>();
+			claims.put(Constants.TOKEN_DATA, data.get());
+			String token = JwtUtil.generateToken(claims);
+			
+			map.put("token", token);
+		}
+		else {
+			map.put("error", HttpStatus.UNAUTHORIZED);
+		}
+		
+		return new ResponseEntity<Object>(map, HttpStatus.OK);
+	}
 
 }
 
